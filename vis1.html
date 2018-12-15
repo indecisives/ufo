@@ -4,9 +4,7 @@
 <head>
 
   <meta charset=utf-8 />
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';"> -->
-
-  <title>UFO reports</title>
+  <title>India Census - 2011</title>
 
   <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
@@ -96,27 +94,6 @@
 <body>
 
 
-
-  <nav id='capitals-filter-div'>
-      <div>
-          <input type="checkbox" checked="checked" id="capitals-filter">
-          <!-- <input type="checkbox" class="myCheckbox" value="changing"> changing
-          <input type="checkbox" class="myCheckbox" value="cone"> cone
-          <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
-          <input type="checkbox" class="myCheckbox" value="disk"> disk
-          <input type="checkbox" class="myCheckbox" value="light"> light
-          <input type="checkbox" class="myCheckbox" value="other"> other
-          <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
-          <input type="checkbox" class="myCheckbox" value="round"> round
-          <input type="checkbox" class="myCheckbox" value="sphere"> sphere
-          <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
-          <input type="checkbox" class="myCheckbox" value="triangle"> triangle
-          <input type="checkbox" class="myCheckbox" value="unknown"> unknown -->
-        </div>
-          <label for="capitals">Show Capitals</label>
-      </div>
-  </nav>
-
 <div id='map' class='map'> </div>
 
 <!-- <div id='select' class='select'>
@@ -138,7 +115,7 @@
 
 
 
-<!-- <script>
+<script>
       data = ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"];
       table = d3.select("#content")
           .append("table")
@@ -171,12 +148,22 @@
         newRows.exit()
           .remove();
       }
-    </script> -->
+    </script>
 
 
+
+<script id="popup-template" type="text/template">
+    <h2>{{state}}</h2>
+    <strong>Capital: </strong>{{capital}} <br>
+    <strong>Population: </strong>{{population}} <br>
+    <strong>Area: </strong>{{area}} square kilometer <br>
+    <strong>Density: {{density}}</strong> people per square kilometer <br>
+    <strong>Growth: </strong>{{growth}} % <br>
+</script>
 
 <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script type="text/javascript" src="census-2011.js"></script>
 <script type="text/javascript" src="events.js"></script>
 
 <script>
@@ -353,8 +340,7 @@
               "geometry": {
                 "type": "Point",
                 // make an array copy and reverse the co-ordinates to (long,lat) for geojson
-                // "coordinates": Array.prototype.slice.call(event.coordinates).reverse()
-                "coordinates": [event.lon, event.lat]
+                "coordinates": Array.prototype.slice.call(event.coordinates).reverse()
               },
               "properties": {
                 "title": "City: " + event.city,
