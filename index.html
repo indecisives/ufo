@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset=utf-8 />
+  <title>India Census - 2011</title>
+
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
+
+	<style>
+
+		body {
+            margin:0; padding:0;
+        }
+
+    	.map {
+            position: absolute;
+            top:0;
+            bottom:0;
+            width: 100%;
+            height: 100%;
+        }
+
+	    .map-legend i {
+	        width: 18px;
+	        height: 18px;
+	        float: left;
+	        margin-right: 8px;
+	        opacity: 0.7;
+	    }
+      .select {
+        position: absolute;
+        top: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+      }
+	    .leaflet-popup-close-button {
+	        display: none;
+	    }
+	    .leaflet-popup-content-wrapper {
+	        pointer-events: none;
+	    }
+
+	    .pie-graph, .bar-graph {
+
+	    	width: 250px;
+	    	height: 250px;
+
+	    	border: thin solid grey;
+            background: black;
+            opacity: 1;
+            text-align: center;
+	    }
+
+        .filter-ui {
+            background: black;
+            color: white;
+            position:absolute;
+            top: 50px;
+            left: 10px;
+            z-index: 100;
+            padding: 10px;
+            border: thin solid grey;
+            border-radius:3px;
+        }
+
+        .census-banner a {
+            background: black;
+            color: #ffd700;
+            position:absolute;
+            top: 303px;
+            left: 710px;
+            z-index: 1;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 24px;
+            border: thin solid grey;
+            text-decoration: none;
+            border-radius:3px;
+        }
+
+        .census-banner a:hover {
+            text-decoration: underline;
+        }
+
+	</style>
+<script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
+</head>
+
+<body>
+
+
+<!-- 
+  <nav id='capitals-filter-div' class='select'>
+      <div>
+          <input type="checkbox" checked="checked" id="capitals-filter">
+          <input type="checkbox" class="myCheckbox" value="changing"> changing
+          <input type="checkbox" class="myCheckbox" value="cone"> cone
+          <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
+          <input type="checkbox" class="myCheckbox" value="disk"> disk
+          <input type="checkbox" class="myCheckbox" value="light"> light
+          <input type="checkbox" class="myCheckbox" value="other"> other
+          <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
+          <input type="checkbox" class="myCheckbox" value="round"> round
+          <input type="checkbox" class="myCheckbox" value="sphere"> sphere
+          <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
+          <input type="checkbox" class="myCheckbox" value="triangle"> triangle
+          <input type="checkbox" class="myCheckbox" value="unknown"> unknown
+        </div>
+          <label for="capitals">Show Capitals</label>
+      </div>
+  </nav> -->
+
+<div id='map' class='map'> </div>
+
+<!-- <div id='select' class='select'>
+  <input type="checkbox" class="myCheckbox" value="changing"> changing
+  <input type="checkbox" class="myCheckbox" value="cone"> cone
+  <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
+  <input type="checkbox" class="myCheckbox" value="disk"> disk
+  <input type="checkbox" class="myCheckbox" value="light"> light
+  <input type="checkbox" class="myCheckbox" value="other"> other
+  <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
+  <input type="checkbox" class="myCheckbox" value="round"> round
+  <input type="checkbox" class="myCheckbox" value="sphere"> sphere
+  <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
+  <input type="checkbox" class="myCheckbox" value="triangle"> triangle
+  <input type="checkbox" class="myCheckbox" value="unknown"> unknown
+</div> -->
+
+
+
+
+
+<script>
+      data = ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"];
+      table = d3.select("#content")
+          .append("table")
+          .property("border","1px");
+      d3.selectAll(".myCheckbox").on("change",update);
+      update();
+
+
+      function update(){
+        var choices = [];
+        d3.selectAll(".myCheckbox").each(function(d){
+          cb = d3.select(this);
+          if(cb.property("checked")){
+            choices.push(cb.property("value"));
+          }
+        });
+
+        if(choices.length > 0){
+          newData = data.filter(function(d,i){return choices.includes(d);});
+        } else {
+          newData = data;
+        }
+
+        newRows = table.selectAll("tr")
+            .data(newData,function(d){return d;});
+        newRows.enter()
+          .append("tr")
+          .append("td")
+          .text(function(d){return d;});
+        newRows.exit()
+          .remove();
+      }
+    </script>
+
+
+
+<!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script type="text/javascript" src="events.js"></script>
+
+<script>
+    L.mapbox.accessToken = 'pk.eyJ1IjoiaW5pdGRvdCIsImEiOiJ3VkkxTldvIn0.7UPZ8q9fgBE70dMV7e0sLw';
+
+    var map = L.mapbox.map('map', 'mapbox.light'),
+        // color reference from color brewer
+        mapBrew = ['rgb(255,255,204)','rgb(217,240,163)','rgb(173,221,142)','rgb(120,198,121)','rgb(65,171,93)','rgb(35,132,67)','rgb(0,90,50)'],
+        // population density range used for choropleth and legend
+        mapRange = [ 5000, 1000, 800, 500, 300, 100, 0 ];
+
+
+    function getStyle(feature) {
+        return {
+            weight: 2,
+            opacity: 0.1,
+            color: 'black',
+            fillOpacity: 0.85,
+            fillColor: getDensityColor( indiaCensus.states[feature.properties.code].density )
+        };
+    }
+
+    // get color depending on population density value
+    function getDensityColor(d) {
+        var colors = Array.prototype.slice.call(mapBrew).reverse(), // creates a copy of the mapBrew array and reverses it
+             range = mapRange;
+
+        return  d > range[0] ? colors[0] :
+                d > range[1] ? colors[1] :
+                d > range[2] ? colors[2] :
+                d > range[3] ? colors[3] :
+                d > range[4] ? colors[4] :
+                d > range[5] ? colors[5] :
+                colors[6];
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mousemove: mousemove,
+            mouseout: mouseout,
+            //click: zoomToFeature
+        });
+    }
+
+    function mousemove(e) {
+        var layer = e.target;
+
+        var popupData = {
+            state: indiaCensus.states[layer.feature.properties.code].name,
+            density: indiaCensus.states[layer.feature.properties.code].density,
+            area: indiaCensus.states[layer.feature.properties.code].area,
+            growth: indiaCensus.states[layer.feature.properties.code].growth,
+            population: indiaCensus.states[layer.feature.properties.code].population,
+            capital: indiaCensus.states[layer.feature.properties.code].capital.name
+        };
+
+        popup.setLatLng(e.latlng);
+
+        var popContent = L.mapbox.template( d3.select("#popup-template").text() , popupData );
+        popup.setContent( popContent );
+
+        if (!popup._map) popup.openOn(map);
+        window.clearTimeout(closeTooltip);
+
+        // highlight feature
+        layer.setStyle({
+            weight: 2,
+            opacity: 0.3,
+            fillOpacity: 0.9
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+        // update the graph with literacy and sex ratio data
+        updateGraph( indiaCensus.states[layer.feature.properties.code] );
+    }
+
+    function mouseout(e) {
+        statesLayer.resetStyle(e.target);
+        closeTooltip = window.setTimeout(function() {
+            // ref: https://www.mapbox.com/mapbox.js/api/v2.1.6/l-map-class/
+            map.closePopup( popup ); // close only the state details popup
+        }, 100);
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    function getLegendHTML() {
+        var grades = Array.prototype.slice.call(mapRange).reverse(), // creates a copy of ranges and reverses it
+            labels = [],
+            from, to;
+        // color reference from color brewer
+        var brew = mapBrew;
+
+        for (var i = 0; i < grades.length; i++) {
+            from = grades[i];
+            to = grades[i + 1];
+
+            labels.push(
+                '<i style="background:' + brew[i] + '"></i> ' +
+                from + (to ? '&ndash;' + to : '+'));
+        }
+
+        return '<span>People per square km</span><br>' + labels.join('<br>');
+    }
+
+  //   // ref: https://www.mapbox.com/mapbox.js/api/v2.1.6/l-icontrol/
+	// var PieGraphControl = L.Control.extend({
+  //       options: {
+	// 		position: 'topright'
+	// 	},
+  //
+	// 	onAdd: function (map) {
+	// 		// create the control container with a particular class name
+	// 		var container = L.DomUtil.create('div', 'pie-graph');
+	// 		// ... initialize other DOM elements, add listeners, etc.
+	// 		return container;
+	// 	}
+	// });
+
+    var BarGraphControl = L.Control.extend({
+        options: {
+            position: 'bottomright'
+        },
+
+        onAdd: function (map) {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'bar-graph');
+            // ... initialize other DOM elements, add listeners, etc.
+            return container;
+        }
+    });
+
+
+
+    function getLiteracyColor (literacy) {
+        // color from colorbrew
+        var literacyBrew = ['rgb(215,25,28)','rgb(253,174,97)','rgb(166,217,106)','rgb(26,150,65)'].reverse(),
+            literacyRange = [ 90, 80, 70, 60];
+
+        literacy = +literacy;
+
+        return literacy > literacyRange[0] ? literacyBrew[0] :
+                literacy > literacyRange[1] ? literacyBrew[1] :
+                literacy > literacyRange[2] ? literacyBrew[2] :
+                literacyBrew[3];
+    }
+
+    // draw the layer with capital markers
+    var capitalLayer;
+
+    drawCapitalMarkers();
+
+    // add the capitals toggle checkbox
+    var capitalFilter = document.getElementById("capitals-filter"),
+        capitalFilterDiv = document.getElementById("capitals-filter-div");
+
+    capitalFilter.addEventListener("change", function(){
+        this.checked ? map.addLayer(capitalLayer) : map.removeLayer(capitalLayer);
+    });
+
+    setCapitalFilterPosition();
+
+    function drawCapitalMarkers () {
+        var capitalGeoJson = [];
+
+        for (var e in ufoEvents.events) {
+          var event = ufoEvents.events[e];
+          capitalGeoJson.push({
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                // make an array copy and reverse the co-ordinates to (long,lat) for geojson
+                // "coordinates": Array.prototype.slice.call(event.coordinates).reverse()
+                "coordinates": [event.lon, event.lat]
+              },
+              "properties": {
+                "title": "City: " + event.city,
+                "description": "State: " + event.state + "<br>Country: " + event.country +  "<br>Shape: " + event.shape,
+                "marker-color": "#800000",
+                "marker-size": "small",
+                // "marker-symbol": "star"
+              }
+          });
+
+        }
+
+        // add the marker layer
+        capitalLayer = L.mapbox.featureLayer( capitalGeoJson ).addTo( map );
+        // open the popup on hover
+        capitalLayer.on('mouseover', function(e) {
+            e.layer.openPopup();
+            // update the graph if census details is present
+            if (e.layer.feature.properties.data.sexratio) {
+                updateGraph( e.layer.feature.properties.data );
+            }
+        });
+
+        capitalLayer.on('mouseout', function(e) {
+            e.layer.closePopup();
+        });
+    }
+
+    function setCapitalFilterPosition () {
+        var gistWidth = 960,
+            gistHeight = 707;
+        capitalFilterDiv.style.top = 0.5*gistHeight + "px";
+        capitalFilterDiv.style.left = 0.78*gistWidth + "px";
+        // adjust the defalut gist preview height
+        d3.select(self.frameElement).style("height", gistHeight + "px");
+    }
+
+</script>
+
+</body>
+</html>
