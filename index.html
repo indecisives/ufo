@@ -33,7 +33,7 @@
 	        opacity: 0.7;
 	    }
       .select {
-        position: absolute;
+        position: relative;
         top: 0;
         background-color: rgba(255, 255, 255, 0.5);
         width: 100%;
@@ -45,17 +45,6 @@
 	    }
 	    .leaflet-popup-content-wrapper {
 	        pointer-events: none;
-	    }
-
-	    .pie-graph, .bar-graph {
-
-	    	width: 250px;
-	    	height: 250px;
-
-	    	border: thin solid grey;
-            background: black;
-            opacity: 1;
-            text-align: center;
 	    }
 
         .filter-ui {
@@ -97,42 +86,38 @@
 
 
 
-  <nav id='capitals-filter-div'>
-      <div>
-          <input type="checkbox" checked="checked" id="capitals-filter">
-          <!-- <input type="checkbox" class="myCheckbox" value="changing"> changing
-          <input type="checkbox" class="myCheckbox" value="cone"> cone
-          <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
-          <input type="checkbox" class="myCheckbox" value="disk"> disk
-          <input type="checkbox" class="myCheckbox" value="light"> light
-          <input type="checkbox" class="myCheckbox" value="other"> other
-          <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
-          <input type="checkbox" class="myCheckbox" value="round"> round
-          <input type="checkbox" class="myCheckbox" value="sphere"> sphere
-          <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
-          <input type="checkbox" class="myCheckbox" value="triangle"> triangle
-          <input type="checkbox" class="myCheckbox" value="unknown"> unknown -->
-        </div>
-          <label for="capitals">Show Capitals</label>
-      </div>
-  </nav>
 
 <div id='map' class='map'> </div>
 
-<!-- <div id='select' class='select'>
-  <input type="checkbox" class="myCheckbox" value="changing"> changing
-  <input type="checkbox" class="myCheckbox" value="cone"> cone
-  <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
-  <input type="checkbox" class="myCheckbox" value="disk"> disk
-  <input type="checkbox" class="myCheckbox" value="light"> light
-  <input type="checkbox" class="myCheckbox" value="other"> other
-  <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
-  <input type="checkbox" class="myCheckbox" value="round"> round
-  <input type="checkbox" class="myCheckbox" value="sphere"> sphere
-  <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
-  <input type="checkbox" class="myCheckbox" value="triangle"> triangle
-  <input type="checkbox" class="myCheckbox" value="unknown"> unknown
-</div> -->
+<nav id='capitals-filter-div' class='filter-ui'>
+    <div>
+        <input type="checkbox" checked="checked" id="capitals-filter">
+        <label for="capitals">Show Capitals<br></label>
+        <input type="checkbox" checked="checked" id="changing-filter">
+        <label for="changing">Show changing</label>
+    </div>
+</nav>
+
+
+<!-- <nav id='capitals-filter-div'>
+    <div>
+        <input type="checkbox" checked="checked" id="capitals-filter">
+        <input type="checkbox" checked="checked" class="myCheckbox" id="changing", id="capitals-filter"> changing
+        <input type="checkbox" checked="checked" class="myCheckbox" id="cone"> cone
+        <input type="checkbox" checked="checked" class="myCheckbox" value="cylinder"> cylinder
+        <input type="checkbox" checked="checked" class="myCheckbox" value="disk"> disk
+        <input type="checkbox" checked="checked" class="myCheckbox" value="light"> light
+        <input type="checkbox" checked="checked" class="myCheckbox" value="other"> other
+        <input type="checkbox" checked="checked" class="myCheckbox" value="rectangle"> rectangle
+        <input type="checkbox" checked="checked" class="myCheckbox" value="round"> round
+        <input type="checkbox" checked="checked" class="myCheckbox" value="sphere"> sphere
+        <input type="checkbox" checked="checked" class="myCheckbox" value="teardrop"> teardrop
+        <input type="checkbox" checked="checked" class="myCheckbox" value="triangle"> triangle
+        <input type="checkbox" checked="checked" class="myCheckbox" value="unknown"> unknown
+      </div>
+        <!-- <label for="capitals">Show Capitals</label> -->
+    </div>
+</nav> -->
 
 
 
@@ -179,6 +164,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script type="text/javascript" src="events.js"></script>
 
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/leaflet.markercluster.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.Default.css' rel='stylesheet' />
+
 <script>
     L.mapbox.accessToken = 'pk.eyJ1IjoiaW5pdGRvdCIsImEiOiJ3VkkxTldvIn0.7UPZ8q9fgBE70dMV7e0sLw';
 
@@ -189,29 +178,6 @@
         mapRange = [ 5000, 1000, 800, 500, 300, 100, 0 ];
 
 
-    function getStyle(feature) {
-        return {
-            weight: 2,
-            opacity: 0.1,
-            color: 'black',
-            fillOpacity: 0.85,
-            fillColor: getDensityColor( indiaCensus.states[feature.properties.code].density )
-        };
-    }
-
-    // get color depending on population density value
-    function getDensityColor(d) {
-        var colors = Array.prototype.slice.call(mapBrew).reverse(), // creates a copy of the mapBrew array and reverses it
-             range = mapRange;
-
-        return  d > range[0] ? colors[0] :
-                d > range[1] ? colors[1] :
-                d > range[2] ? colors[2] :
-                d > range[3] ? colors[3] :
-                d > range[4] ? colors[4] :
-                d > range[5] ? colors[5] :
-                colors[6];
-    }
 
     function onEachFeature(feature, layer) {
         layer.on({
@@ -267,24 +233,24 @@
         map.fitBounds(e.target.getBounds());
     }
 
-    function getLegendHTML() {
-        var grades = Array.prototype.slice.call(mapRange).reverse(), // creates a copy of ranges and reverses it
-            labels = [],
-            from, to;
-        // color reference from color brewer
-        var brew = mapBrew;
-
-        for (var i = 0; i < grades.length; i++) {
-            from = grades[i];
-            to = grades[i + 1];
-
-            labels.push(
-                '<i style="background:' + brew[i] + '"></i> ' +
-                from + (to ? '&ndash;' + to : '+'));
-        }
-
-        return '<span>People per square km</span><br>' + labels.join('<br>');
-    }
+    // function getLegendHTML() {
+    //     var grades = Array.prototype.slice.call(mapRange).reverse(), // creates a copy of ranges and reverses it
+    //         labels = [],
+    //         from, to;
+    //     // color reference from color brewer
+    //     var brew = mapBrew;
+    //
+    //     for (var i = 0; i < grades.length; i++) {
+    //         from = grades[i];
+    //         to = grades[i + 1];
+    //
+    //         labels.push(
+    //             '<i style="background:' + brew[i] + '"></i> ' +
+    //             from + (to ? '&ndash;' + to : '+'));
+    //     }
+    //
+    //     return '<span>People per square km</span><br>' + labels.join('<br>');
+    // }
 
   //   // ref: https://www.mapbox.com/mapbox.js/api/v2.1.6/l-icontrol/
 	// var PieGraphControl = L.Control.extend({
@@ -299,34 +265,20 @@
 	// 		return container;
 	// 	}
 	// });
+    //
+    // var BarGraphControl = L.Control.extend({
+    //     options: {
+    //         position: 'bottomright'
+    //     },
+    //
+    //     onAdd: function (map) {
+    //         // create the control container with a particular class name
+    //         var container = L.DomUtil.create('div', 'bar-graph');
+    //         // ... initialize other DOM elements, add listeners, etc.
+    //         return container;
+    //     }
+    // });
 
-    var BarGraphControl = L.Control.extend({
-        options: {
-            position: 'bottomright'
-        },
-
-        onAdd: function (map) {
-            // create the control container with a particular class name
-            var container = L.DomUtil.create('div', 'bar-graph');
-            // ... initialize other DOM elements, add listeners, etc.
-            return container;
-        }
-    });
-
-
-
-    function getLiteracyColor (literacy) {
-        // color from colorbrew
-        var literacyBrew = ['rgb(215,25,28)','rgb(253,174,97)','rgb(166,217,106)','rgb(26,150,65)'].reverse(),
-            literacyRange = [ 90, 80, 70, 60];
-
-        literacy = +literacy;
-
-        return literacy > literacyRange[0] ? literacyBrew[0] :
-                literacy > literacyRange[1] ? literacyBrew[1] :
-                literacy > literacyRange[2] ? literacyBrew[2] :
-                literacyBrew[3];
-    }
 
     // draw the layer with capital markers
     var capitalLayer;
@@ -336,19 +288,30 @@
     // add the capitals toggle checkbox
     var capitalFilter = document.getElementById("capitals-filter"),
         capitalFilterDiv = document.getElementById("capitals-filter-div");
+    var changingFilter = document.getElementById("changing-filter")
+
+    var changing = document.getElementById("changing");
+    console.log('changing: ' + changing);
 
     capitalFilter.addEventListener("change", function(){
         this.checked ? map.addLayer(capitalLayer) : map.removeLayer(capitalLayer);
+        // if this.
+    });
+
+    changingFilter.addEventListener("change", function(){
+      this.checked ? map.addLayer(changingLayer) : map.removeLayer(changingLayer);
+      console.log('its changed!')
     });
 
     setCapitalFilterPosition();
 
     function drawCapitalMarkers () {
         var capitalGeoJson = [];
+        var changingJson = [];
 
         for (var e in ufoEvents.events) {
           var event = ufoEvents.events[e];
-          capitalGeoJson.push({
+          jsonEvent = {
               "type": "Feature",
               "geometry": {
                 "type": "Point",
@@ -358,24 +321,27 @@
               },
               "properties": {
                 "title": "City: " + event.city,
-                "description": "State: " + event.state + "<br>Country: " + event.country +  "<br>Shape: " + event.shape,
+                "description": "<br>Shape: " + event.shape,
                 "marker-color": "#800000",
                 "marker-size": "small",
                 // "marker-symbol": "star"
-              }
-          });
+              }}
+          if (event.shape == 'changing') {
 
-        }
+            changingJson.push(jsonEvent)
+          } else {
+            capitalGeoJson.push(jsonEvent)
+          }
+          };
+
+        // }
 
         // add the marker layer
         capitalLayer = L.mapbox.featureLayer( capitalGeoJson ).addTo( map );
+        changingLayer = L.mapbox.featureLayer( changingJson).addTo (map);
         // open the popup on hover
         capitalLayer.on('mouseover', function(e) {
             e.layer.openPopup();
-            // update the graph if census details is present
-            if (e.layer.feature.properties.data.sexratio) {
-                updateGraph( e.layer.feature.properties.data );
-            }
         });
 
         capitalLayer.on('mouseout', function(e) {
