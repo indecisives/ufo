@@ -96,21 +96,25 @@
 
 <div id='map' class='map'> </div>
 
-<!-- <div id='select' class='select'>
-  <input type="checkbox" class="myCheckbox" value="changing"> changing
-  <input type="checkbox" class="myCheckbox" value="cone"> cone
-  <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
-  <input type="checkbox" class="myCheckbox" value="disk"> disk
-  <input type="checkbox" class="myCheckbox" value="light"> light
-  <input type="checkbox" class="myCheckbox" value="other"> other
-  <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
-  <input type="checkbox" class="myCheckbox" value="round"> round
-  <input type="checkbox" class="myCheckbox" value="sphere"> sphere
-  <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
-  <input type="checkbox" class="myCheckbox" value="triangle"> triangle
-  <input type="checkbox" class="myCheckbox" value="unknown"> unknown
-</div> -->
-
+<nav id='capitals-filter-div'>
+    <div>
+        <input type="checkbox" checked="checked" id="capitals-filter">
+        <!-- <input type="checkbox" class="myCheckbox" value="changing"> changing
+        <input type="checkbox" class="myCheckbox" value="cone"> cone
+        <input type="checkbox" class="myCheckbox" value="cylinder"> cylinder
+        <input type="checkbox" class="myCheckbox" value="disk"> disk
+        <input type="checkbox" class="myCheckbox" value="light"> light
+        <input type="checkbox" class="myCheckbox" value="other"> other
+        <input type="checkbox" class="myCheckbox" value="rectangle"> rectangle
+        <input type="checkbox" class="myCheckbox" value="round"> round
+        <input type="checkbox" class="myCheckbox" value="sphere"> sphere
+        <input type="checkbox" class="myCheckbox" value="teardrop"> teardrop
+        <input type="checkbox" class="myCheckbox" value="triangle"> triangle
+        <input type="checkbox" class="myCheckbox" value="unknown"> unknown -->
+      </div>
+        <label for="capitals">Show Capitals</label>
+    </div>
+</nav>
 
 
 
@@ -163,8 +167,8 @@
 
 <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-<script type="text/javascript" src="census-2011.js"></script>
-<script type="text/javascript" src="events.js"></script>
+<script type="text/javascript" src="../census-2011.js"></script>
+<script type="text/javascript" src="../events.js"></script>
 
 <script>
     L.mapbox.accessToken = 'pk.eyJ1IjoiaW5pdGRvdCIsImEiOiJ3VkkxTldvIn0.7UPZ8q9fgBE70dMV7e0sLw';
@@ -340,7 +344,7 @@
               "geometry": {
                 "type": "Point",
                 // make an array copy and reverse the co-ordinates to (long,lat) for geojson
-                "coordinates": Array.prototype.slice.call(event.coordinates).reverse()
+                "coordinates": [event.lon, event.lat]
               },
               "properties": {
                 "title": "City: " + event.city,
