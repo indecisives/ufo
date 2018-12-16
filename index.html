@@ -32,30 +32,31 @@
   <nav id='capitals-filter-div' class='filter-ui' top="10px">
       <div>
 
+  <!-- var colors = ["#8CCFD9","#AFC1E4","#94ABDB","#798FD2","#6672CC","#915BC8","#A781D5","#D4D788","#D29D79","#CF766E","#CF766E","#A15736"] -->
           <input type="checkbox" checked="checked" id="changing-filter">
-          <label for="changing">Show changing<br></label>
+          <label for="changing">Show changing <div class="box" style="background-color: #8CCFD9"></div><br></label>
           <input type="checkbox" checked="checked" id="cone-filter">
-          <label for="changing">Show cone<br></label>
+          <label for="changing">Show cone<div class="box" style="background-color: #AFC1E4"></div><br></label>
           <input type="checkbox" checked="checked" id="cylinder-filter">
-          <label for="changing">Show cylinder<br></label>
+          <label for="changing">Show cylinder<div class="box" style="background-color: #94ABDB"></div><br></label>
           <input type="checkbox" checked="checked" id="disk-filter">
-          <label for="changing">Show disk<br></label>
+          <label for="changing">Show disk<div class="box" style="background-color: #798FD2"></div><br></label>
           <input type="checkbox" checked="checked" id="light-filter">
-          <label for="changing">Show light<br></label>
+          <label for="changing">Show light<div class="box" style="background-color: #6672CC"></div><br></label>
           <input type="checkbox" checked="checked" id="other-filter">
-          <label for="changing">Show other<br></label>
+          <label for="changing">Show other<div class="box" style="background-color: #915BC8"></div><br></label>
           <input type="checkbox" checked="checked" id="rectangle-filter">
-          <label for="changing">Show rectangle<br></label>
+          <label for="changing">Show rectangle<div class="box" style="background-color: #A781D5"></div><br></label>
           <input type="checkbox" checked="checked" id="round-filter">
-          <label for="changing">Show round<br></label>
+          <label for="changing">Show round<div class="box" style="background-color: #D4D788"></div><br></label>
           <input type="checkbox" checked="checked" id="sphere-filter">
-          <label for="changing">Show sphere<br></label>
+          <label for="changing">Show sphere<div class="box" style="background-color: #D29D79"></div><br></label>
           <input type="checkbox" checked="checked" id="teardrop-filter">
-          <label for="changing">Show teardrop<br></label>
+          <label for="changing">Show teardrop<div class="box" style="background-color: #CF766E"></div><br></label>
           <input type="checkbox" checked="checked" id="triangle-filter">
-          <label for="changing">Show triangle<br></label>
+          <label for="changing">Show triangle<div class="box" style="background-color: #CF766E"></div><br></label>
           <input type="checkbox" checked="checked" id="unknown-filter">
-          <label for="changing">Show unknown<br></label>
+          <label for="changing">Show unknown<div class="box" style="background-color: #A15736"></div><br></label>
       </div>
   </nav>
 
@@ -151,17 +152,14 @@
     var triangleFilter = document.getElementById("triangle-filter");
     var unknownFilter = document.getElementById("unknown-filter");
 
+    var filters = [changingFilter, coneFilter, cylinderFilter, diskFilter, lightFilter, otherFilter,
+    rectangleFilter, roundFilter, sphereFilter, teardropFilter, triangleFilter, unknownFilter];
+    var layers = [changingLayer, coneLayer, cylinderLayer, diskLayer, lightLayer, otherLayer,
+    rectangleLayer, roundLayer, sphereLayer, teardropLayer, triangleLayer, unknownLayer]
+
 
     function filter_json() {
       ufoEvents_filtered = {};
-      // for (var e in ufoEvents.events) {
-      //   var event = ufoEvents.events[e];
-      //   if (event.month >= year) {
-      //     ufoEvents_filtered[e] = event;
-      //   }
-      //
-      // };
-      // console.log(ufoEvents);
 
       ufoEvents_filtered = ufoEvents.events.filter(function(e){
         return e.month >= year;
@@ -192,18 +190,9 @@
       });
     }
 
-    //
-    var filters = [changingFilter, coneFilter, cylinderFilter, diskFilter, lightFilter, otherFilter,
-    rectangleFilter, roundFilter, sphereFilter, teardropFilter, triangleFilter, unknownFilter];
-    var layers = [changingLayer, coneLayer, cylinderLayer, diskLayer, lightLayer, otherLayer,
-    rectangleLayer, roundLayer, sphereLayer, teardropLayer, triangleLayer, unknownLayer]
-
-
-
     for (var i=0; i < filters.length; i+= 1) {
       listenLayer(filters[i], layers[i])
     }
-
 
     // setCapitalFilterPosition();
     function drawCapitalMarkers () {
