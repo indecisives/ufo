@@ -154,13 +154,18 @@
 
     function filter_json() {
       ufoEvents_filtered = {};
-      for (var e in ufoEvents.events) {
-        var event = ufoEvents.events[e];
-        if (event.month >= year) {
-          ufoEvents_filtered[e] = event;
-        }
+      // for (var e in ufoEvents.events) {
+      //   var event = ufoEvents.events[e];
+      //   if (event.month >= year) {
+      //     ufoEvents_filtered[e] = event;
+      //   }
+      //
+      // };
+      // console.log(ufoEvents);
 
-      };
+      ufoEvents_filtered = ufoEvents.events.filter(function(e){
+        return e.month >= year;
+      });
       for (var i=0; i < filters.length; i+= 1) {
         // if (layers[i]) {
           map.removeLayer(layers[i]);
@@ -208,8 +213,9 @@
           allJsons[shapes[i]] = []
         }
         var capitalGeoJson = [];
-        for (var e in ufoEvents_filtered) {
-          var event = ufoEvents_filtered[e];
+        for (var i=0; i < ufoEvents_filtered.length; i+=1) {
+          // console.log(e);
+          var event = ufoEvents_filtered[i];
           jsonEvent = {
               "type": "Feature",
               "geometry": {
@@ -220,7 +226,7 @@
               },
               "properties": {
                 "title": "City: " + event.city,
-                "description": "<br>Shape: " + event.shape,
+                "description": "<br>Shape: " + event.shape + "<br>month: " + event.month,
                 "marker-color": colors[shapes.indexOf(event.shape)],
                 "marker-size": "small",
                 "marker-symbol": "rocket"
