@@ -219,6 +219,7 @@
         for (var i=0; i < ufoEvents_filtered.length; i+=1) {
           // console.log(e);
           var event = ufoEvents_filtered[i];
+          if (event.mont > year){continue;}
           jsonEvent = {
               "type": "Feature",
               "geometry": {
