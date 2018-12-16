@@ -10,6 +10,11 @@
 
   <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
+  <link rel="stylesheet" href="d3.slider.css" />
+
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
 
 	<style>
 		body {
@@ -54,23 +59,72 @@
             border: thin solid grey;
             border-radius:3px;
         }
-        .census-banner a {
-            background: black;
-            color: #ffd700;
-            position:absolute;
-            top: 303px;
-            left: 710px;
-            z-index: 1;
-            padding: 10px;
-            font-weight: bold;
-            font-size: 24px;
-            border: thin solid grey;
-            text-decoration: none;
-            border-radius:3px;
+        .session {
+          position: absolute;
+          margin-bottom: 20px;
+          bottom: 0px;
         }
-        .census-banner a:hover {
-            text-decoration: underline;
+
+        .row {
+          height: 12px;
+          width: 100%;
         }
+
+        .colors {
+          background: linear-gradient(to right, #2dc4b2, #3bb3c3, #669ec4, #8b88b6, #a2719b, #aa5e79);
+          margin-bottom: 5px;
+        }
+
+        .label {
+          width: 15%;
+          display: inline-block;
+          text-align: center;
+        }
+        #console {
+    position: absolute;
+    width: 240px;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: white;
+  }
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, Sans-serif;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 90%;
+}
+
+h1 {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #2dc4b2;
+}
+
+#console {
+  position: absolute;
+  width: 240px;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: white;
+}
+
 	</style>
 <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
 </head>
@@ -82,10 +136,16 @@
 
   <div id='map' class='map'> </div>
 
+
+
+  <div class='session' id='sliderbar'>
+    <h2>Year: <label id='active-hour'>2010</label></h2>
+    <input id='slider' class='row' type='range' min='2010' max='2018' step='1' value='2010' />
+  </div>
+
   <nav id='capitals-filter-div' class='filter-ui'>
       <div>
-          <!-- <input type="checkbox" checked="checked" id="capitals-filter">
-          <label for="capitals">Show Capitals<br></label> -->
+
           <input type="checkbox" checked="checked" id="changing-filter">
           <label for="changing">Show changing<br></label>
           <input type="checkbox" checked="checked" id="cone-filter">
@@ -114,78 +174,31 @@
   </nav>
 
 
-<!-- <nav id='capitals-filter-div'>
-    <div>
-        <input type="checkbox" checked="checked" id="capitals-filter">
-        <input type="checkbox" checked="checked" class="myCheckbox" id="changing", id="capitals-filter"> changing
-        <input type="checkbox" checked="checked" class="myCheckbox" id="cone"> cone
-        <input type="checkbox" checked="checked" class="myCheckbox" value="cylinder"> cylinder
-        <input type="checkbox" checked="checked" class="myCheckbox" value="disk"> disk
-        <input type="checkbox" checked="checked" class="myCheckbox" value="light"> light
-        <input type="checkbox" checked="checked" class="myCheckbox" value="other"> other
-        <input type="checkbox" checked="checked" class="myCheckbox" value="rectangle"> rectangle
-        <input type="checkbox" checked="checked" class="myCheckbox" value="round"> round
-        <input type="checkbox" checked="checked" class="myCheckbox" value="sphere"> sphere
-        <input type="checkbox" checked="checked" class="myCheckbox" value="teardrop"> teardrop
-        <input type="checkbox" checked="checked" class="myCheckbox" value="triangle"> triangle
-        <input type="checkbox" checked="checked" class="myCheckbox" value="unknown"> unknown
-      </div>
-        <!-- <label for="capitals">Show Capitals</label> -->
-    </div>
-</nav> -->
-
-
-
-
-
-<!-- <script>
-      data = ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"];
-      table = d3.select("#content")
-          .append("table")
-          .property("border","1px");
-      d3.selectAll(".myCheckbox").on("change",update);
-      update();
-      function update(){
-        var choices = [];
-        d3.selectAll(".myCheckbox").each(function(d){
-          cb = d3.select(this);
-          if(cb.property("checked")){
-            choices.push(cb.property("value"));
-          }
-        });
-        if(choices.length > 0){
-          newData = data.filter(function(d,i){return choices.includes(d);});
-        } else {
-          newData = data;
-        }
-        newRows = table.selectAll("tr")
-            .data(newData,function(d){return d;});
-        newRows.enter()
-          .append("tr")
-          .append("td")
-          .text(function(d){return d;});
-        newRows.exit()
-          .remove();
-      }
-    </script> -->
-
-
 
 <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script type="text/javascript" src="events.js"></script>
+<script type="text/javascript" src="sample.js"></script>
 
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/leaflet.markercluster.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.css' rel='stylesheet' />
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.Default.css' rel='stylesheet' />
 
+
 <script>
+
+// var map = L.mapbox.map('map')
+//     .setView([40.73, -74.011], 13)
+//     .addLayer(L.mapbox.tileLayer('mapbox.streets'));
+
+
+
+
     L.mapbox.accessToken = 'pk.eyJ1IjoiaW5pdGRvdCIsImEiOiJ3VkkxTldvIn0.7UPZ8q9fgBE70dMV7e0sLw';
-    var map = L.mapbox.map('map', 'mapbox.light'),
-        // color reference from color brewer
-        mapBrew = ['rgb(255,255,204)','rgb(217,240,163)','rgb(173,221,142)','rgb(120,198,121)','rgb(65,171,93)','rgb(35,132,67)','rgb(0,90,50)'],
-        // population density range used for choropleth and legend
-        mapRange = [ 5000, 1000, 800, 500, 300, 100, 0 ];
+    var map = L.mapbox.map('map', 'mapbox.light')
+    // .addLayer(L.mapbox.tileLayer('mapbox.streets')),
+
+
     function onEachFeature(feature, layer) {
         layer.on({
             mousemove: mousemove,
@@ -230,57 +243,22 @@
     function zoomToFeature(e) {
         map.fitBounds(e.target.getBounds());
     }
-    // function getLegendHTML() {
-    //     var grades = Array.prototype.slice.call(mapRange).reverse(), // creates a copy of ranges and reverses it
-    //         labels = [],
-    //         from, to;
-    //     // color reference from color brewer
-    //     var brew = mapBrew;
-    //
-    //     for (var i = 0; i < grades.length; i++) {
-    //         from = grades[i];
-    //         to = grades[i + 1];
-    //
-    //         labels.push(
-    //             '<i style="background:' + brew[i] + '"></i> ' +
-    //             from + (to ? '&ndash;' + to : '+'));
-    //     }
-    //
-    //     return '<span>People per square km</span><br>' + labels.join('<br>');
-    // }
-  //   // ref: https://www.mapbox.com/mapbox.js/api/v2.1.6/l-icontrol/
-	// var PieGraphControl = L.Control.extend({
-  //       options: {
-	// 		position: 'topright'
-	// 	},
-  //
-	// 	onAdd: function (map) {
-	// 		// create the control container with a particular class name
-	// 		var container = L.DomUtil.create('div', 'pie-graph');
-	// 		// ... initialize other DOM elements, add listeners, etc.
-	// 		return container;
-	// 	}
-	// });
-    //
-    // var BarGraphControl = L.Control.extend({
-    //     options: {
-    //         position: 'bottomright'
-    //     },
-    //
-    //     onAdd: function (map) {
-    //         // create the control container with a particular class name
-    //         var container = L.DomUtil.create('div', 'bar-graph');
-    //         // ... initialize other DOM elements, add listeners, etc.
-    //         return container;
-    //     }
-    // });
+
     // draw the layer with capital markers
+    var shapes = ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"]
+    var colors = ["#8CCFD9","#AFC1E4","#94ABDB","#798FD2","#6672CC","#915BC8","#A781D5","#D4D788","#D29D79","#CF766E","#C45B4F","#A15736"]
+
+
+
     var capitalLayer;
     var coneLayer;
+    var allJsons;
+    var ufoEvents_filtered = ufoEvents.events;
+    var year = 2010;
+
     drawCapitalMarkers();
     // add the capitals toggle checkbox
     var capitalFilterDiv = document.getElementById("capitals-filter-div")
-    // var capitalFilter = document.getElementById("capitals-filter");
     var changingFilter = document.getElementById("changing-filter");
     var coneFilter = document.getElementById("cone-filter");
     var cylinderFilter = document.getElementById("cylinder-filter");
@@ -294,62 +272,71 @@
     var triangleFilter = document.getElementById("triangle-filter");
     var unknownFilter = document.getElementById("unknown-filter");
 
-    // var filters = [changingFilter, coneFilter, cylinderFilter, diskFilter, lightFilter, otherFilter,
-    // rectangleFilter, roundFilter, sphereFilter, teardropFilter, triangleFilter, unknownFilter];
 
-    // capitalFilter.addEventListener("change", function(){
-    //     this.checked ? map.addLayer(capitalLayer) : map.removeLayer(capitalLayer);
-    // });
+    function filter_json() {
+      ufoEvents_filtered = {};
+      for (var e in ufoEvents.events) {
+        var event = ufoEvents.events[e];
+        if (event.year >= year) {
+          ufoEvents_filtered[e] = event;
+        }
+
+      };
+      for (var i=0; i < filters.length; i+= 1) {
+        // if (layers[i]) {
+          map.removeLayer(layers[i]);
+        // }
+      };
+      drawCapitalMarkers();
+
+
+      };
+
+    document.getElementById('slider').addEventListener('input', function(e) {
+      year = parseInt(e.target.value);
+
+    filter_json();
+    // update the map
+    // map.setFilter('collisions', ['==', ['number', ['get', 'Hour']], hour]);
+
+    // converting 0-23 hour to AMPM format
+    // var ampm = hour >= 12 ? 'PM' : 'AM';
+    var hour12 = year;
+
+    // update text in the UI
+    document.getElementById('active-hour').innerText = hour12;
+  });
+
 
     function listenLayer(filter, layer) {
       filter.addEventListener("change", function(){
         this.checked ? map.addLayer(layer) : map.removeLayer(layer);
-        console.log('its changed!' + layer + 'bitch')
       });
     }
 
+    //
     var filters = [changingFilter, coneFilter, cylinderFilter, diskFilter, lightFilter, otherFilter,
     rectangleFilter, roundFilter, sphereFilter, teardropFilter, triangleFilter, unknownFilter];
     var layers = [changingLayer, coneLayer, cylinderLayer, diskLayer, lightLayer, otherLayer,
     rectangleLayer, roundLayer, sphereLayer, teardropLayer, triangleLayer, unknownLayer]
 
+
+
     for (var i=0; i < filters.length; i+= 1) {
       listenLayer(filters[i], layers[i])
     }
 
-    // changingFilter.addEventListener("change", function(){
-    //   this.checked ? map.addLayer(changingLayer) : map.removeLayer(changingLayer);
-    //   console.log('its changed!')
-    // });
-    //
-    // coneFilter.addEventListener("change", function(){
-    //   this.checked ? map.addLayer(changingLayer) : map.removeLayer(changingLayer);
-    //   console.log('cone bitch!')
-    // });
-    //
-    // cylinderFilter.addEventListener("change", function(){
-    //   this.checked ? map.addLayer(cylinderLayer) : map.removeLayer(cylinderLayer);
-    //   console.log('cone bitch!')
-    // });
-    //
-    // cylinderFilter.addEventListener("change", function(){
-    //   this.checked ? map.addLayer(cylinderLayer) : map.removeLayer(cylinderLayer);
-    //   console.log('cone bitch!')
-    // });
-
 
     setCapitalFilterPosition();
     function drawCapitalMarkers () {
-        var shapes = ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"]
+
         var allJsons = {}
         for (var i=0; i < shapes.length; i+=1) {
           allJsons[shapes[i]] = []
         }
-        console.log(allJsons);
         var capitalGeoJson = [];
-        var changingJson = [];
-        for (var e in ufoEvents.events) {
-          var event = ufoEvents.events[e];
+        for (var e in ufoEvents_filtered) {
+          var event = ufoEvents_filtered[e];
           jsonEvent = {
               "type": "Feature",
               "geometry": {
@@ -361,22 +348,16 @@
               "properties": {
                 "title": "City: " + event.city,
                 "description": "<br>Shape: " + event.shape,
-                "marker-color": "#800000",
+                "marker-color": colors[shapes.indexOf(event.shape)],
                 "marker-size": "small",
-                // "marker-symbol": "star"
+                "marker-symbol": "rocket"
               }}
-          // if (event.shape == 'changing') {
-          //   changingJson.push(jsonEvent)
-          // } else if (event.shape == 'cone') {
-          //   coneJson.push(jsonEvent)
-          // }
+
           allJsons[event.shape].push(jsonEvent);
           };
-        // }
-        // add the marker layer
-        // capitalLayer = L.mapbox.featureLayer( allJsons[shapes[2]] ).addTo( map );
-        changingLayer = L.mapbox.featureLayer( allJsons['changing']).addTo (map);
-        coneFilter = L.mapbox.featureLayer( allJsons['cone']).addTo (map);
+
+        changingLayer = L.mapbox.featureLayer( allJsons[shapes[0]]).addTo (map);
+        coneLayer = L.mapbox.featureLayer( allJsons[shapes[1]]).addTo (map);
         cylinderLayer = L.mapbox.featureLayer( allJsons[shapes[2]]).addTo (map);
         diskLayer = L.mapbox.featureLayer( allJsons[shapes[3]]).addTo (map);
         lightLayer = L.mapbox.featureLayer( allJsons[shapes[4]]).addTo (map);
@@ -388,14 +369,13 @@
         triangleLayer = L.mapbox.featureLayer( allJsons[shapes[10]]).addTo (map);
         unknownLayer = L.mapbox.featureLayer( allJsons[shapes[11]]).addTo (map);
 
+        layers = [changingLayer, coneLayer, cylinderLayer, diskLayer, lightLayer, otherLayer,
+        rectangleLayer, roundLayer, sphereLayer, teardropLayer, triangleLayer, unknownLayer]
 
-        // open the popup on hover
-        changingLayer.on('mouseover', function(e) {
-            e.layer.openPopup();
-        });
-        changingLayer.on('mouseout', function(e) {
-            e.layer.closePopup();
-        });
+
+// ["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"]
+
+
     }
     function setCapitalFilterPosition () {
         var gistWidth = 960,
