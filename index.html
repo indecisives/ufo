@@ -133,8 +133,9 @@
     var capitalLayer;
     var coneLayer;
     var allJsons;
-    var ufoEvents_filtered = ufoEvents.events;
+    var ufoEvents_filtered = -1;
     var year = 1;
+    const shapes_on = new Set(["changing", "cone", "cylinder", "disk", "light", "other", "rectangle", "round", "sphere", "teardrop", "triangle", "unknown"]);
 
     drawCapitalMarkers();
     // add the capitals toggle checkbox
@@ -160,9 +161,10 @@
 
     function filter_json() {
       ufoEvents_filtered = {};
-
+      console.log(shapes_on);
       ufoEvents_filtered = ufoEvents.events.filter(function(e){
-        return e.month >= year;
+        return (e.month >= year) && shapes_on.has(e.shape);
+
       });
       for (var i=0; i < filters.length; i+= 1) {
         // if (layers[i]) {
@@ -185,19 +187,30 @@
   });
 
 
-    function listenLayer(filter, layer) {
+    function listenLayer(filter, layer, shape) {
       filter.addEventListener("change", function(){
         this.checked ? map.addLayer(layer) : map.removeLayer(layer);
+        console.log(shapes_on);
+        if (this.checked) {shapes_on.add(shape)} else {shapes_on.delete(shape)}
+
+
+
+        console.log(shapes_on);
+
       });
     }
 
     for (var i=0; i < filters.length; i+= 1) {
-      listenLayer(filters[i], layers[i])
+      listenLayer(filters[i], layers[i], shapes[i])
     }
 
     // setCapitalFilterPosition();
     function drawCapitalMarkers () {
 
+        if (ufoEvents_filtered == -1) {
+
+          ufoEvents_filtered = ufoEvents.events;
+        }
         var allJsons = {}
         for (var i=0; i < shapes.length; i+=1) {
           allJsons[shapes[i]] = []
@@ -216,7 +229,7 @@
               },
               "properties": {
                 "title": "City: " + event.city,
-                "description": "<br>Shape: " + event.shape + "<br>month: " + event.month,
+                "description": "<br>Shape: " + event.shape + "<br>month: " + event.month + " <br>duration: " + event.duration,
                 "marker-color": colors[shapes.indexOf(event.shape)],
                 "marker-size": "small",
                 "marker-symbol": "rocket"

@@ -43,6 +43,8 @@ body {
     z-index: 100;
     margin-bottom: 0px;
     bottom: 0px;
+    /* display: block; */
+    left: 150px;
   }
 
   .row {
