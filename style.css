@@ -1,5 +1,6 @@
 body {
         margin:0; padding:0;
+        font-family: Verdana, Geneva, sans-serif;
     }
   .map {
         position: absolute;
@@ -33,13 +34,14 @@ body {
   }
   .filter-ui {
       background: rgba(0, 0, 0, .7) ;
+      font-size: 13px;
       width: 150px;
       color: white;
       position:absolute;
       top: 40%;
       right: 10px;
       z-index: 10;
-      padding: 10px;
+      padding: 15px;
       border: thin solid grey;
       border-radius:5px;
   }
@@ -49,6 +51,7 @@ body {
     height: 40px;
     opacity: 0.7;
     position: absolute;
+    font-size: 13px;
     z-index: 100;
     margin-bottom: 0px;
     bottom: 0px;
