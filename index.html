@@ -25,7 +25,7 @@
   <div id='map' class='map'> </div>
 
   <div class='session' id='sliderbar'>
-    Year: <label id='active-hour'>1</label>
+    Since <label id='active-hour'>January</label>
     <input id='slider' class='row' type='range' min='1' max='12' step='1' value='1' />
   </div>
 
@@ -180,7 +180,8 @@
     var hour12 = year;
 
     // update text in the UI
-    document.getElementById('active-hour').innerText = hour12;
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    document.getElementById('active-hour').innerText = months[hour12 - 1];
   });
 
 
