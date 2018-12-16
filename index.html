@@ -25,18 +25,11 @@
             top:0;
             bottom:0;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 50px);
         }
-	    .map-legend i {
-	        width: 18px;
-	        height: 18px;
-	        float: left;
-	        margin-right: 8px;
-	        opacity: 0.7;
-	    }
       .select {
         position: relative;
-        top: 0;
+        bottom: 0;
         background-color: rgba(255, 255, 255, 0.5);
         width: 100%;
         text-align: center;
@@ -50,6 +43,7 @@
 	    }
         .filter-ui {
             background: black;
+            opacity: 0.7;
             color: white;
             position:absolute;
             top: 50px;
@@ -57,16 +51,22 @@
             z-index: 100;
             padding: 10px;
             border: thin solid grey;
-            border-radius:3px;
+            border-radius:5px;
         }
         .session {
+          /* background: black; */
+          width: 50%;
+          height: 40px;
+          opacity: 0.7;
           position: absolute;
-          margin-bottom: 20px;
+          z-index: 100;
+          margin-bottom: 0px;
           bottom: 0px;
         }
 
         .row {
-          height: 12px;
+          position: absolute;
+          z-index: 100;
           width: 100%;
         }
 
@@ -80,50 +80,41 @@
           display: inline-block;
           text-align: center;
         }
+        /* #map {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 100%;
+          height: 90%;
+        } */
+
+        h1 {
+          font-size: 20px;
+          line-height: 30px;
+        }
+
+        h2 {
+          font-size: 14px;
+          line-height: 20px;
+          margin-bottom: 10px;
+        }
+
+        a {
+          text-decoration: none;
+          color: #2dc4b2;
+        }
+
         #console {
-    position: absolute;
-    width: 240px;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: white;
+          position: absolute;
+          width: 240px;
+          margin: 10px;
+          padding: 10px 20px;
+          background-color: white;
+        }
+
+
   }
-  body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Helvetica Neue', Helvetica, Arial, Sans-serif;
-}
 
-#map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  height: 90%;
-}
-
-h1 {
-  font-size: 20px;
-  line-height: 30px;
-}
-
-h2 {
-  font-size: 14px;
-  line-height: 20px;
-  margin-bottom: 10px;
-}
-
-a {
-  text-decoration: none;
-  color: #2dc4b2;
-}
-
-#console {
-  position: absolute;
-  width: 240px;
-  margin: 10px;
-  padding: 10px 20px;
-  background-color: white;
-}
 
 	</style>
 <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
@@ -132,15 +123,13 @@ a {
 <body>
 
 
-
-
   <div id='map' class='map'> </div>
 
 
 
   <div class='session' id='sliderbar'>
-    <h2>Year: <label id='active-hour'>2010</label></h2>
-    <input id='slider' class='row' type='range' min='2010' max='2018' step='1' value='2010' />
+    Year: <label id='active-hour'>1</label>
+    <input id='slider' class='row' type='range' min='1' max='12' step='1' value='1' />
   </div>
 
   <nav id='capitals-filter-div' class='filter-ui'>
@@ -276,7 +265,7 @@ a {
       ufoEvents_filtered = {};
       for (var e in ufoEvents.events) {
         var event = ufoEvents.events[e];
-        if (event.year >= year) {
+        if (event.month >= year) {
           ufoEvents_filtered[e] = event;
         }
 
@@ -295,11 +284,7 @@ a {
       year = parseInt(e.target.value);
 
     filter_json();
-    // update the map
-    // map.setFilter('collisions', ['==', ['number', ['get', 'Hour']], hour]);
 
-    // converting 0-23 hour to AMPM format
-    // var ampm = hour >= 12 ? 'PM' : 'AM';
     var hour12 = year;
 
     // update text in the UI
