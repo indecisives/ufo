@@ -59,7 +59,7 @@ body {
   .label {
     width: 15%;
     display: inline-block;
-    text-align: center;
+    /* text-align: center; */
     vertical-align: middle;
   }
   #console {
