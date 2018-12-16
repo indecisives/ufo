@@ -25,7 +25,7 @@
   <div id='map' class='map'> </div>
 
   <div class='session' id='sliderbar'>
-    Since <label id='active-hour'>January</label>
+    Until <label id='active-hour'>January</label>
     <input id='slider' class='row' type='range' min='1' max='12' step='1' value='1' />
   </div>
 
@@ -163,7 +163,7 @@
       ufoEvents_filtered = {};
       console.log(shapes_on);
       ufoEvents_filtered = ufoEvents.events.filter(function(e){
-        return (e.month >= year) && shapes_on.has(e.shape);
+        return (e.month <= year) && shapes_on.has(e.shape);
 
       });
       for (var i=0; i < filters.length; i+= 1) {
